@@ -10,5 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 0) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_27_144303) do
+  create_table "applications", force: :cascade do |t|
+    t.string "project"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["project"], name: "index_applications_on_project"
+  end
+
+  create_table "events", force: :cascade do |t|
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
 end
