@@ -57,3 +57,6 @@ build-iPhoneSimulator/
 
 # sqlite DB
 db/*.sqlite3
+
+# local ENV vars
+.env

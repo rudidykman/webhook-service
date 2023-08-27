@@ -19,3 +19,21 @@ class InvalidRequestError < RequestError
     }
   end
 end
+
+class ConflictError < RequestError
+  def initialize(message)
+    @message = message
+    super(@message)
+  end
+
+  def status
+    409
+  end
+
+  def to_response_format
+    {
+      type: 'conflict',
+      message: @message
+    }
+  end
+end
