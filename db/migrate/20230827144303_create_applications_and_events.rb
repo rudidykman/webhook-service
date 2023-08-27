@@ -7,7 +7,9 @@ class CreateApplicationsAndEvents < ActiveRecord::Migration[7.0]
     end
 
     create_table :events do |t|
+      t.references :application, foreign_key: true
       t.string :status
+      t.string :failure_reason
 
       t.timestamps
     end

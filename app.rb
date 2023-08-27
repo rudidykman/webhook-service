@@ -4,6 +4,7 @@ require 'sinatra'
 require 'sinatra/json'
 
 require_relative './lib/errors'
+require_relative './lib/event-service'
 
 def validate_request_body(body)
   event_schemer = JSONSchemer.schema(Pathname.new('./lib/event-schema.json'))
@@ -14,6 +15,7 @@ end
 post '/events' do
   body = JSON.parse(request.body.read)
   validate_request_body(body)
+  EventService.create_and_send(body)
 rescue RequestError => error
   status(error.status)
   json(error.to_response_format)

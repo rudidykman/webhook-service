@@ -19,9 +19,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_27_144303) do
   end
 
   create_table "events", force: :cascade do |t|
+    t.integer "application_id"
     t.string "status"
+    t.string "failure_reason"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["application_id"], name: "index_events_on_application_id"
   end
 
+  add_foreign_key "events", "applications"
 end
