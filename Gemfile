@@ -21,3 +21,7 @@ end
 group :development, :test do
   gem 'rspec', '~> 3.12.0'
 end
+
+group :test do
+  gem 'database_cleaner-active_record', '~> 2.1.0'
+end

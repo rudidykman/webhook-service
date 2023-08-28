@@ -35,5 +35,6 @@ module NotificationService
   rescue => error
     puts "Failed to create message on Svix for event #{event["id"]}: #{error}"
     notification.update!(status: :failed, failure_reason: error)
+    raise error
   end
 end
