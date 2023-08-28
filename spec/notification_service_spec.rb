@@ -1,7 +1,7 @@
 require 'spec_helper'
-require_relative '../lib/event_service'
+require_relative '../lib/notification_service'
 
-describe EventService do
+describe NotificationService do
   describe '.create_and_send' do
     it 'should be implemented' do
     end

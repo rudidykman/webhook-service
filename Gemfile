@@ -13,6 +13,7 @@ gem 'sqlite3', '~> 1.6.3'
 gem 'svix', '~> 1.8.1'
 
 group :development do
+  gem 'annotate', '~> 3.2.0'
   gem 'byebug', '~> 11.1.3'
   gem 'rerun', '~> 0.14.0'
 end
