@@ -12,6 +12,7 @@ module NotificationService
 
     svix_message = send_notification_to_svix(event, notification, application)
     notification.update!(status: :submitted, svix_message_id: svix_message.id, failure_reason: nil)
+    notification
   end
 
   private
@@ -19,9 +20,11 @@ module NotificationService
   def self.find_or_create_notification(event, application)
     notification = Notification.find_by(event_id: event['id'])
     return notification unless notification.nil?
-    # TODO: what do we do if we find an existing pending notification here?
 
     Notification.create!(event_id: event['id'], application_id: application.id, status: :pending)
+    # Note: for this to be production ready, I would also add a step here to lock the notification in the DB
+    # for the edge case where the same event is received multiple times very shortly after one another.
+    # For this challenge I am ignoring that edge case.
   end
 
   def self.send_notification_to_svix(event, notification, application)

@@ -17,7 +17,8 @@ end
 post '/notifications' do
   body = JSON.parse(request.body.read)
   validate_request_body(body)
-  NotificationService.create_and_send(body)
+  notification = NotificationService.create_and_send(body)
+  json(notification)
 rescue RequestError => error
   status(error.status)
   json(error.to_response_format)
