@@ -31,7 +31,7 @@ module NotificationService
     svix = Svix::Client.new(ENV['SVIX_API_KEY'])
     message = Svix::MessageIn.new({
       'event_type' => event['type'],
-      'payload' => event['data'],
+      'payload' => event,
       'event_id' => event['id']
     })
     svix.message.create(application.svix_application_id, message)
