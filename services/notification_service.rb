@@ -29,6 +29,7 @@ module NotificationService
 
   def self.send_notification_to_svix(event, notification, application)
     svix = Svix::Client.new(ENV['SVIX_API_KEY'])
+    # The event_id is also used as an idempotency key by Svix, see https://docs.svix.com/idempotency
     message = Svix::MessageIn.new({
       'event_type' => event['type'],
       'payload' => event,

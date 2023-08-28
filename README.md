@@ -2,6 +2,8 @@
 
 This service receives incoming JSON-formatted POST messages, processes the events, and sends them to Svix for further handling. It's designed to help customers react to asynchronous events by providing common HTTP webhooks.
 
+This README provides basic instructions for setup and testing. See `NOTES.md` for my thoughts and design decisions.
+
 ## Setup
 
 ### Prerequisites:
