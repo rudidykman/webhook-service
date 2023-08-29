@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 describe NotificationService do
@@ -11,7 +13,7 @@ describe NotificationService do
         'project' => project
       }
     end
-    let(:application) { Application.create!(svix_application_id: 'app_123', project: project) }
+    let(:application) { Application.create!(svix_application_id: 'app_123', project:) }
     let(:svix_message) { double('Svix::Message', id: 'msg_123') }
 
     before do
@@ -31,10 +33,28 @@ describe NotificationService do
     end
 
     context 'when a notification already exists for the event' do
+      context 'when the existing notification status is submitted' do
+        before do
+          Notification.create!(event_id: event['id'], application_id: application.id, status: :submitted,
+                               svix_message_id: svix_message.id)
+        end
+
+        it 'raises a ConflictError' do
+          expect(NotificationService).not_to receive(:send_notification_to_svix)
+
+          expect do
+            NotificationService.create_and_send(event)
+          end.to raise_error(ConflictError, /has already been sent to Svix/)
+        end
+      end
+
       context 'when the existing notification status is failed' do
+        before do
+          Notification.create!(event_id: event['id'], application_id: application.id, status: :failed,
+                               failure_reason: 'test')
+        end
+
         it 'creates and sends the notification to Svix' do
-          Notification.create!(event_id: event['id'], application_id: application.id, status: :failed, failure_reason: 'test')
-          
           expect(NotificationService).to receive(:send_notification_to_svix).and_return(svix_message)
           NotificationService.create_and_send(event)
 
@@ -43,29 +63,20 @@ describe NotificationService do
           expect(notification.svix_message_id).to eq(svix_message.id)
         end
       end
-
-      context 'when the existing notification status is submitted' do
-        it 'raises a ConflictError' do
-          Notification.create!(event_id: event['id'], application_id: application.id, status: :submitted, svix_message_id: svix_message.id)
-
-          expect(NotificationService).not_to receive(:send_notification_to_svix)
-
-          expect {
-            NotificationService.create_and_send(event)
-          }.to raise_error(ConflictError, /has already been sent to Svix/)
-        end
-      end
     end
 
     context 'when there is an error sending to Svix' do
-      it 'updates the notification with failure status and reason' do
-        error_message = 'Test error'
-        allow_any_instance_of(Svix::Client).to receive(:message).and_raise(error_message)
+      let(:error_message) { 'Test error' }
 
-        expect {
+      before do
+        allow_any_instance_of(Svix::Client).to receive(:message).and_raise(error_message)
+      end
+
+      it 'updates the notification with failure status and reason' do
+        expect do
           NotificationService.create_and_send(event)
-        }.to raise_error(StandardError, error_message)
-        
+        end.to raise_error(StandardError, error_message)
+
         notification = Notification.find_by(event_id: event['id'])
         expect(notification.status).to eq('failed')
         expect(notification.failure_reason).to eq(error_message)

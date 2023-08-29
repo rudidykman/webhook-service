@@ -8,17 +8,17 @@ This file contains notes on my thinking and decision making while working on the
 
 The first decision I made was to use Ruby, as it is quick and easy to get a new service started and I have experience working with Ruby.
 
-Next, I decided to use [Sinatra](https://sinatrarb.com/) as a web framework, again because it is very quick and easy to use when create a new web application, and I felt that Rails would be too bulky for a service that would only contain a single endpoint. This decision came with some drawbacks, as I ended up spending some time adding additional gems (like ActiveRecord) that would have come out of the box with Rails, but I still think it is a suitable choice for the application. I don't have previous experience with Sinatra, so it was also fun for me to learning something new while completing the challenge.
+Next, I decided to use [Sinatra](https://sinatrarb.com/) as a web framework, again because it is very quick and easy to use when creating a new web application, and I felt that Rails would be too bulky for a service that would only contain a single endpoint. This decision came with some drawbacks, as I ended up spending some time adding additional gems (like ActiveRecord) that would have come out of the box with Rails, but I still think it is a suitable choice for the application. I don't have previous experience with Sinatra, so it was also fun for me to learning something new while completing the challenge.
 
 ## App structure
 
 It would have been possible to solve the challenge without making use of a database, as [Svix supports idempotency](https://docs.svix.com/idempotency). However, I decided to add a database layer to the service, as I wanted to create a separate application on Svix for each Gigs project, and it is useful to keep track of events sent to Svix and any subsequent failures.
 
-I structured the domain entities in my service to closely match the Svix entities that I made use of, namely `Notification` (which maps 1-1 to a Svix `message`) and `Application` (which maps 1-1 to a Svix `application`). I decided to implement the validation in the database, so the models barely contain anything. I have made use of ActiveRecord, as it does all the heavy lifting for you. As such, the models are (intuitively) located in `models/`.
+I structured the domain entities in my service to closely match the Svix entities that I made use of, namely `Notification` (which maps 1-1 to a Svix `message`) and `Application` (which maps 1-1 to a Svix `application`). I have made use of ActiveRecord, as it does all the heavy lifting for you. As such, the models are (intuitively) located in `models/`.
 
 I decided to include a service layer to contain all the business logic. This makes the service easy to understand and test. The services are located in `services/`.
 
-The single endpoint (`POST /notifications`) is in the main `app.rb` file. This only does some basic request validation (using [json_schemer](https://github.com/davishmcclurg/json_schemer) to validate the incoming request body against the provided event JSON schema), calls the service, and then formats the response. I added custom error classes in `lib/errors.rb` to make it easy to handle and format errors.
+The single endpoint (`POST /notifications`) is in the main `app.rb` file. This only does some basic request validation (using [json_schemer](https://github.com/davishmcclurg/json_schemer) to validate the incoming request body against the provided event JSON schema), calls the service, and then formats the response. I added custom error classes in `lib/errors.rb` to make it easy to handle and format errors. As the app only has a single endpoint, I decided not to create any controllers, and simply keep the endpoint in `app.rb`.
 
 ## Svix Rate Limiting
 

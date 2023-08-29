@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateApplicationsAndNotifications < ActiveRecord::Migration[7.0]
   def change
     create_table :applications do |t|
@@ -10,7 +12,7 @@ class CreateApplicationsAndNotifications < ActiveRecord::Migration[7.0]
     create_table :notifications do |t|
       t.string :event_id, unique: true, null: false
       t.string :svix_message_id
-      t.references :application, foreign_key: true
+      t.references :application, foreign_key: true, null: false
       t.string :status, null: false
       t.string :failure_reason
 

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 # == Schema Information
 #
 # Table name: applications
@@ -10,4 +12,7 @@
 #
 
 class Application < ActiveRecord::Base
+  has_many :notifications
+  validates :svix_application_id, presence: true
+  validates :project, presence: true
 end

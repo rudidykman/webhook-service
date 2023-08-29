@@ -21,7 +21,7 @@ ActiveRecord::Schema[7.0].define(version: 2023_08_27_144303) do
   create_table "notifications", force: :cascade do |t|
     t.string "event_id", null: false
     t.string "svix_message_id"
-    t.integer "application_id"
+    t.integer "application_id", null: false
     t.string "status", null: false
     t.string "failure_reason"
     t.datetime "created_at", null: false
